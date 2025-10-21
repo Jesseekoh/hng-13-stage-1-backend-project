@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "ts-node-dev src/app.ts",
+    "dev": "ts-node-dev src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -19,7 +19,6 @@
     "@types/node": "^24.8.1",
     "pino-pretty": "^13.1.2",
     "ts-node-dev": "^2.0.0",
-    "tsx": "^4.20.6",
     "typescript": "^5.9.3"
   },
   "dependencies": {
