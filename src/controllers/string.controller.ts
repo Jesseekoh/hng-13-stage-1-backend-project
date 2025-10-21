@@ -37,7 +37,7 @@ export async function analyzeStringController(
     const result = analyzeString(value.trim());
 
     strings.push(result);
-    res.status(201).json({ result });
+    res.status(201).json(result);
   } catch (error) {
     next(error);
   }
