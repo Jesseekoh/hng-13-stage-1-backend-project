@@ -25,7 +25,8 @@ export function generateSHA256(input: string): string {
  * Check if a string is a palindrome
  */
 export function isPalindrome(str: string): boolean {
-  const cleaned = str.toLowerCase().replace(/[^a-z0-9]/g, "");
+  // const cleaned = str.toLowerCase().replace(/[^a-z0-9]/g, "");
+  const cleaned = str.toLowerCase();
   return cleaned === cleaned.split("").reverse().join("");
 }
 

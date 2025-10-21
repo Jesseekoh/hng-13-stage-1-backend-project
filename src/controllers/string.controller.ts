@@ -10,6 +10,56 @@ import { interpretQuery } from "../utils/interpretQuery";
 
 const strings: StringAnalysisResult[] = [];
 
+export async function analyzeStringController(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    if (req.body === undefined || req.body.value === undefined) {
+      return res.status(400).json({
+        message: 'Invalid request body or missing "value" field',
+      });
+    }
+
+    const validationResult = stringRequestSchema.parse(req.body);
+    const { value } = validationResult;
+    const hash = generateSHA256(value);
+
+    const existingString = strings.find((s) => s.value === value);
+
+    if (existingString) {
+      return res.status(409).json({
+        message: "String already exists",
+      });
+    }
+
+    const result = analyzeString(value.trim());
+
+    strings.push(result);
+    res.status(201).json({ result });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function getStringController(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const { value } = req.params;
+
+    const validationResult = stringRequestSchema.parse(req.params);
+    const result = strings.find((s) => s.value === value);
+    if (!result) return res.status(404).json({ error: "String not found" });
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+}
+
 export async function getFilteredStringsController(
   req: Request,
   res: Response,
@@ -54,55 +104,6 @@ export async function getFilteredStringsController(
         contains_character,
       },
     });
-  } catch (error) {
-    next(error);
-  }
-}
-
-export async function getStringController(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
-  try {
-    const { value } = req.params;
-
-    const validationResult = stringRequestSchema.parse(req.params);
-    const result = strings.find((s) => s.value === value);
-    if (!result) return res.status(404).json({ error: "String not found" });
-    res.json(result);
-  } catch (error) {
-    next(error);
-  }
-}
-export async function analyzeStringController(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
-  try {
-    if (req.body.value === undefined) {
-      return res.status(400).json({
-        message: 'Invalid request body or missing "value" field',
-      });
-    }
-
-    const validationResult = stringRequestSchema.parse(req.body);
-    const { value } = validationResult;
-    const hash = generateSHA256(value);
-
-    const existingString = strings.find((s) => s.value === value);
-
-    if (existingString) {
-      return res.status(409).json({
-        message: "String already exists",
-      });
-    }
-
-    const result = analyzeString(value.trim());
-
-    strings.push(result);
-    res.status(201).json({ result });
   } catch (error) {
     next(error);
   }
